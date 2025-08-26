@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 
 int main() {
@@ -7,7 +8,9 @@ int main() {
 
     int i = 0, j = 0;
 
-    //Inicializar tabuleiro
+   
+    // Inicializar tabuleiro
+   
     i = 0;
     while (i < tamanho) {
         j = 0;
@@ -17,8 +20,10 @@ int main() {
         }
         i++;
     }
-    //Definir navios
+
     
+    // Definir navios (coordenadas iniciais)
+   
     // Navio horizontal
     int navio1_linha = 1;
     int navio1_coluna = 3;
@@ -27,7 +32,17 @@ int main() {
     int navio2_linha = 5;
     int navio2_coluna = 7;
 
-    // posicionar navio horizontal
+    // Navio diagonal ↘
+    int navio3_linha = 0;
+    int navio3_coluna = 0;
+
+    // Navio diagonal ↙
+    int navio4_linha = 0;
+    int navio4_coluna = 9;
+
+    
+    // Posicionar navio horizontal
+    
     if (navio1_coluna + tamanhoNavio <= tamanho) {
         j = 0;
         while (j < tamanhoNavio) {
@@ -38,7 +53,9 @@ int main() {
         }
     }
 
-    // posicionar navio vertical
+    
+    // Posicionar navio vertical
+   
     if (navio2_linha + tamanhoNavio <= tamanho) {
         i = 0;
         while (i < tamanhoNavio) {
@@ -48,7 +65,38 @@ int main() {
             i++;
         }
     }
+
+    
+    // Posicionar navio diagonal 
+   
+    if (navio3_linha + tamanhoNavio <= tamanho &&
+        navio3_coluna + tamanhoNavio <= tamanho) {
+        i = 0;
+        while (i < tamanhoNavio) {
+            if (tabuleiro[navio3_linha + i][navio3_coluna + i] == 0) {
+                tabuleiro[navio3_linha + i][navio3_coluna + i] = 3;
+            }
+            i++;
+        }
+    }
+
+   
+    // Posicionar navio diagonal 
+    
+    if (navio4_linha + tamanhoNavio <= tamanho &&
+        navio4_coluna - (tamanhoNavio - 1) >= 0) {
+        i = 0;
+        while (i < tamanhoNavio) {
+            if (tabuleiro[navio4_linha + i][navio4_coluna - i] == 0) {
+                tabuleiro[navio4_linha + i][navio4_coluna - i] = 3;
+            }
+            i++;
+        }
+    }
+
+    
     // Exibir tabuleiro
+   
     printf("=== TABULEIRO BATALHA NAVAL ===\n\n");
     i = 0;
     while (i < tamanho) {
