@@ -1,112 +1,128 @@
-
 #include <stdio.h>
+#include <stdlib.h> 
 
 int main() {
     int tamanho = 10;     
-    int tamanhoNavio = 3; 
     int tabuleiro[10][10];
 
-    int i = 0, j = 0;
+    int i, j;
 
-   
-    // Inicializar tabuleiro
-   
-    i = 0;
-    while (i < tamanho) {
-        j = 0;
-        while (j < tamanho) {
-            tabuleiro[i][j] = 0; 
-            j++;
+    // ==========================
+    // Inicializar tabuleiro (com água = 0)
+    // ==========================
+    for (i = 0; i < tamanho; i++) {
+        for (j = 0; j < tamanho; j++) {
+            tabuleiro[i][j] = 0;
         }
-        i++;
     }
 
-    
-    // Definir navios (coordenadas iniciais)
-   
-    // Navio horizontal
-    int navio1_linha = 1;
-    int navio1_coluna = 3;
+    // ==========================
+    // colocar alguns navios (valor = 3)
+    // ==========================
+    // navio horizontal
+    for (j = 3; j < 6; j++) {
+        tabuleiro[2][j] = 3;
+    }
+    // navio vertical
+    for (i = 5; i < 8; i++) {
+        tabuleiro[i][7] = 3;
+    }
 
-    // Navio vertical
-    int navio2_linha = 5;
-    int navio2_coluna = 7;
+    // ==========================
+    // Criar matrizes das habilidades (5x5)
+    // ==========================
+    int habilidade_tam = 5;
 
-    // Navio diagonal ↘
-    int navio3_linha = 0;
-    int navio3_coluna = 0;
+    int cone[5][5];
+    int cruz[5][5];
+    int octaedro[5][5];
 
-    // Navio diagonal ↙
-    int navio4_linha = 0;
-    int navio4_coluna = 9;
-
-    
-    // Posicionar navio horizontal
-    
-    if (navio1_coluna + tamanhoNavio <= tamanho) {
-        j = 0;
-        while (j < tamanhoNavio) {
-            if (tabuleiro[navio1_linha][navio1_coluna + j] == 0) {
-                tabuleiro[navio1_linha][navio1_coluna + j] = 3;
+    // Cone 
+    for (i = 0; i < habilidade_tam; i++) {
+        for (j = 0; j < habilidade_tam; j++) {
+            if (j >= (habilidade_tam/2 - i) && j <= (habilidade_tam/2 + i)) {
+                cone[i][j] = 1;
+            } else {
+                cone[i][j] = 0;
             }
-            j++;
         }
     }
 
-    
-    // Posicionar navio vertical
-   
-    if (navio2_linha + tamanhoNavio <= tamanho) {
-        i = 0;
-        while (i < tamanhoNavio) {
-            if (tabuleiro[navio2_linha + i][navio2_coluna] == 0) {
-                tabuleiro[navio2_linha + i][navio2_coluna] = 3;
+    // Cruz 
+    for (i = 0; i < habilidade_tam; i++) {
+        for (j = 0; j < habilidade_tam; j++) {
+            if (i == habilidade_tam/2 || j == habilidade_tam/2) {
+                cruz[i][j] = 1;
+            } else {
+                cruz[i][j] = 0;
             }
-            i++;
         }
     }
 
-    
-    // Posicionar navio diagonal 
-   
-    if (navio3_linha + tamanhoNavio <= tamanho &&
-        navio3_coluna + tamanhoNavio <= tamanho) {
-        i = 0;
-        while (i < tamanhoNavio) {
-            if (tabuleiro[navio3_linha + i][navio3_coluna + i] == 0) {
-                tabuleiro[navio3_linha + i][navio3_coluna + i] = 3;
+    // Octaedro 
+    for (i = 0; i < habilidade_tam; i++) {
+        for (j = 0; j < habilidade_tam; j++) {
+            if (abs(habilidade_tam/2 - i) + abs(habilidade_tam/2 - j) <= habilidade_tam/2) {
+                octaedro[i][j] = 1;
+            } else {
+                octaedro[i][j] = 0;
             }
-            i++;
         }
     }
 
-   
-    // Posicionar navio diagonal 
-    
-    if (navio4_linha + tamanhoNavio <= tamanho &&
-        navio4_coluna - (tamanhoNavio - 1) >= 0) {
-        i = 0;
-        while (i < tamanhoNavio) {
-            if (tabuleiro[navio4_linha + i][navio4_coluna - i] == 0) {
-                tabuleiro[navio4_linha + i][navio4_coluna - i] = 3;
+    // ==========================
+    // Aplicar habilidades no tabuleiro
+    // ==========================
+    int origem_cone_l = 0, origem_cone_c = 2;
+    int origem_cruz_l = 5, origem_cruz_c = 5;
+    int origem_octa_l = 8, origem_octa_c = 2;
+
+    for (i = 0; i < habilidade_tam; i++) {
+        for (j = 0; j < habilidade_tam; j++) {
+            // Cone
+            if (cone[i][j] == 1) {
+                int linha = origem_cone_l + i;
+                int coluna = origem_cone_c + j - habilidade_tam/2;
+                if (linha >= 0 && linha < tamanho && coluna >= 0 && coluna < tamanho) {
+                    if (tabuleiro[linha][coluna] == 0) {
+                        tabuleiro[linha][coluna] = 5;
+                    }
+                }
             }
-            i++;
+
+            // Cruz
+            if (cruz[i][j] == 1) {
+                int linha = origem_cruz_l + i - habilidade_tam/2;
+                int coluna = origem_cruz_c + j - habilidade_tam/2;
+                if (linha >= 0 && linha < tamanho && coluna >= 0 && coluna < tamanho) {
+                    if (tabuleiro[linha][coluna] == 0) {
+                        tabuleiro[linha][coluna] = 5;
+                    }
+                }
+            }
+
+            // Octaedro
+            if (octaedro[i][j] == 1) {
+                int linha = origem_octa_l + i - habilidade_tam/2;
+                int coluna = origem_octa_c + j - habilidade_tam/2;
+                if (linha >= 0 && linha < tamanho && coluna >= 0 && coluna < tamanho) {
+                    if (tabuleiro[linha][coluna] == 0) {
+                        tabuleiro[linha][coluna] = 5;
+                    }
+                }
+            }
         }
     }
 
-    
-    // Exibir tabuleiro
-   
-    printf("=== TABULEIRO BATALHA NAVAL ===\n\n");
-    i = 0;
-    while (i < tamanho) {
-        j = 0;
-        while (j < tamanho) {
+    // ==========================
+    //Exibir tabuleiro 
+    // ==========================
+    printf("=== TABULEIRO COM HABILIDADES ===\n\n");
+    for (i = 0; i < tamanho; i++) {
+        for (j = 0; j < tamanho; j++) {
             printf("%d ", tabuleiro[i][j]);
-            j++;
         }
         printf("\n");
-        i++;
     }
 
     return 0;
